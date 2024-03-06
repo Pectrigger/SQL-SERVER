@@ -1,0 +1,49 @@
+1.)use db_name  (The db u want to )
+GO
+
+2.) Run this script to determine db encrypted
+SELECT
+db.name,
+db.is_encrypted,
+dm.encryption_state,
+dm.percent_complete,
+dm.key_algorithm,
+dm.key_length,
+db.database_id
+FROM
+sys.databases db
+LEFT OUTER JOIN sys.dm_database_encryption_keys dm
+ON db.database_id = dm.database_id;
+GO
+
+
+3.) Backup db use the GUI backup to do this
+
+
+4.) Backing the certificate that is encrypting this db
+
+First check for cert name : select * from sys.certificate; (Write the name dsame way u saw it on where certificate_name is )
+
+BACKUP CERTIFICATE certificate_name TO FILE = 'C:\path\certname.cer
+WITH PRIVATE KEY (file='C:\path\certname.pvk
+Encryption BY PASSWORD= 'strong-password')
+
+e.g : 
+BACKUP CERTIFICATE PowerAccount_HQ TO FILE = 'C:\wallet\PowerAccount_HQ.cert'
+with private key ( file='C:\wallet\PowerAccount_HQ.pvk',
+encryption by password='Vnp-1234');
+
+5.) Move the backup, certkey and certpvk to the new server folder
+
+6.) On the new server create a master key
+USE master;
+GO
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'use password';
+GO
+
+Stil on the new server
+7.) Restore the Cert
+CREATE CERTIFICATE BAckupEncryptionCert
+FROM FILE= 'C:\wallet\PowerAccount_HQ.cert'
+WITH PRIVATE KEY (FILE = 'C:\wallet\PowerAccount_HQ.pvk', DECRYPTION BY PASSWORD= 'Vnp-1234')
+

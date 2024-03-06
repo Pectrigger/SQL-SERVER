@@ -1,0 +1,39 @@
+***** restore database test from disk = 'c:\backup\pa.bak'  ****
+****************************************************************
+
+				HOW TO ENCRYPT WHOLE DATABASE
+1.) USE MASTER PRIVILEGE : use master;
+
+2.) Drop Master Key if it exist : drop master key;
+
+
+3.) Create Master key : create master key encryption by password = 'vnp-1234';
+
+
+4.) create a backup certificate : create certificate payarena with subject = 'payarerna encryption database ';
+
+5.) Create Database encryption Key : 
+Use a particular database that exists : use payarena
+
+CREATE DATABASE ENCRYPTION KEY
+   WITH ALGORITHM = AES_256
+   ENCRYPTION BY SERVER CERTIFICATE payarena;
+
+6.) Take Full backup of your database for the encryption to work
+backup database test from disk = 'c:\backup\pa.bak'
+
+7.) alter database payarena set encryption on
+
+
+
+
+
+
+
+a.) This command retrieves information about certificates in the current database : 				select * from sys.certificates
+
+b.) This command retrieves information about symmetric keys in the current database: 				select * from sys.symmetric_keys
+
+c.) This command retrieves information about all databases in the SQL Server instance: 				SELECT NAME,is_encrypted FROM SYS.databases
+
+d.) This command retrieves detailed information about the database encryption keys in the current database: 	SELECT * FROM SYS.dm_database_encryption_keys
